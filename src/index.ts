@@ -6,6 +6,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { TOOL_DEFINITIONS, type ToolName } from "./tool-registry.js";
 import { fioriConnect, fioriClose, fioriSessionInfo } from "./tools/connection.js";
+import { fioriScreenshot, fioriPageInfo, fioriControlGet } from "./tools/read.js";
 import { sessionManager } from "./session-manager.js";
 
 const server = new Server(
@@ -37,6 +38,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break;
       case "fiori_session_info":
         result = fioriSessionInfo();
+        break;
+      case "fiori_screenshot":
+        result = await fioriScreenshot(args as { label?: string });
+        break;
+      case "fiori_page_info":
+        result = await fioriPageInfo();
+        break;
+      case "fiori_control_get":
+        result = await fioriControlGet(args as { selector: Record<string, unknown> });
         break;
       default:
         result = { error: true, message: `Unknown tool: ${name}` };

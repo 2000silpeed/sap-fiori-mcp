@@ -1,4 +1,5 @@
 import { transition, initialModel, type SessionModel, type SessionState } from "./prototype/session-state-machine.js";
+import { launchBrowser, type FioriConfig } from "./wdio/browser-factory.js";
 
 export class SessionNotConnectedError extends Error {
   constructor() {
@@ -8,23 +9,29 @@ export class SessionNotConnectedError extends Error {
 
 export class SessionManager {
   private model: SessionModel = initialModel();
-  private browser: unknown = null;
+  private browser: WebdriverIO.Browser | null = null;
 
   getState(): SessionState {
     return this.model.state;
   }
 
-  getSession(): unknown {
+  getSession(): WebdriverIO.Browser {
     if (this.model.state !== "ready" || !this.browser) {
       throw new SessionNotConnectedError();
     }
     return this.browser;
   }
 
-  async connect(url: string, username: string, password: string): Promise<void> {
-    this.model = transition(this.model, { type: "CONNECT_START", url });
+  async connect(cfg: FioriConfig): Promise<void>;
+  async connect(url: string, username: string, password: string): Promise<void>;
+  async connect(cfgOrUrl: FioriConfig | string, username?: string, password?: string): Promise<void> {
+    const cfg: FioriConfig = typeof cfgOrUrl === "string"
+      ? { url: cfgOrUrl, username: username!, password: password! }
+      : cfgOrUrl;
+
+    this.model = transition(this.model, { type: "CONNECT_START", url: cfg.url });
     try {
-      this.browser = await this._startBrowser(url, username, password);
+      this.browser = await launchBrowser(cfg);
       this.model = transition(this.model, { type: "CONNECT_SUCCESS" });
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
@@ -52,13 +59,11 @@ export class SessionManager {
     this._stopBrowser().catch(() => {});
   }
 
-  private async _startBrowser(_url: string, _username: string, _password: string): Promise<unknown> {
-    // wdi5 / WebdriverIO 실제 연결 — Phase 2에서 구현
-    throw new Error("Not implemented");
-  }
-
   private async _stopBrowser(): Promise<void> {
-    this.browser = null;
+    if (this.browser) {
+      await this.browser.deleteSession().catch(() => {});
+      this.browser = null;
+    }
   }
 }
 

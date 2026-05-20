@@ -22,6 +22,41 @@ export const TOOL_DEFINITIONS = [
     description: "현재 세션 상태(idle/initializing/ready/error), URL, 에러 메시지를 조회합니다.",
     inputSchema: { type: "object", properties: {} },
   },
+  {
+    name: "fiori_screenshot",
+    description: "현재 Fiori 화면을 스크린샷으로 캡처합니다. 저장 경로와 base64 이미지를 반환합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        label: { type: "string", description: "파일명 라벨 (기본: manual)" },
+      },
+    },
+  },
+  {
+    name: "fiori_page_info",
+    description: "현재 페이지 URL, 타이틀, Fiori 해시 라우트, UI5 버전/테마/언어를 조회합니다.",
+    inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: "fiori_control_get",
+    description: "UI5 컨트롤의 값/상태를 조회합니다. OPA5 셀렉터(id, viewName, controlType, properties)로 컨트롤을 특정합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        selector: {
+          type: "object",
+          description: "OPA5 셀렉터. 예: {\"id\": \"myButton\"} 또는 {\"controlType\": \"sap.m.Input\", \"properties\": {\"placeholder\": \"검색\"}}",
+          properties: {
+            id: { type: "string" },
+            viewName: { type: "string" },
+            controlType: { type: "string" },
+            properties: { type: "object" },
+          },
+        },
+      },
+      required: ["selector"],
+    },
+  },
 ] as const;
 
 export type ToolName = typeof TOOL_DEFINITIONS[number]["name"];
