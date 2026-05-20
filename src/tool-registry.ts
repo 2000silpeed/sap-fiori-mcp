@@ -57,6 +57,69 @@ export const TOOL_DEFINITIONS = [
       required: ["selector"],
     },
   },
+  {
+    name: "fiori_navigate",
+    description: "Fiori 앱으로 이동합니다. hash(#Shell-home 등 Fiori 라우트) 또는 url(전체 URL) 중 하나를 지정합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        hash: { type: "string", description: "Fiori 해시 라우트 (예: Shell-home, PurchaseOrder-manage)" },
+        url: { type: "string", description: "이동할 전체 URL" },
+      },
+    },
+  },
+  {
+    name: "fiori_launchpad_tile",
+    description: "Fiori Launchpad에서 지정한 타이틀의 타일을 클릭합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "클릭할 타일의 헤더 텍스트 (예: 구매 발주)" },
+      },
+      required: ["title"],
+    },
+  },
+  {
+    name: "fiori_control_set",
+    description: "UI5 컨트롤에 값을 입력합니다. Input, Select, DatePicker 등 값 설정 가능한 컨트롤에 사용합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        selector: {
+          type: "object",
+          description: "OPA5 셀렉터",
+          properties: {
+            id: { type: "string" },
+            viewName: { type: "string" },
+            controlType: { type: "string" },
+            properties: { type: "object" },
+          },
+        },
+        value: { description: "설정할 값 (문자열, 숫자, 불리언)" },
+      },
+      required: ["selector", "value"],
+    },
+  },
+  {
+    name: "fiori_control_press",
+    description: "UI5 컨트롤을 클릭/누릅니다. Button, Link, ListItem 등에 사용합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        selector: {
+          type: "object",
+          description: "OPA5 셀렉터",
+          properties: {
+            id: { type: "string" },
+            viewName: { type: "string" },
+            controlType: { type: "string" },
+            properties: { type: "object" },
+          },
+        },
+      },
+      required: ["selector"],
+    },
+  },
 ] as const;
 
 export type ToolName = typeof TOOL_DEFINITIONS[number]["name"];
