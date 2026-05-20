@@ -9,6 +9,8 @@ import { fioriConnect, fioriClose, fioriSessionInfo } from "./tools/connection.j
 import { fioriScreenshot, fioriPageInfo, fioriControlGet } from "./tools/read.js";
 import { fioriNavigate, fioriLaunchpadTile } from "./tools/navigate.js";
 import { fioriControlSet, fioriControlPress } from "./tools/write.js";
+import { fioriWaitFor } from "./tools/stability.js";
+import { fioriTableRows } from "./tools/table.js";
 import { sessionManager } from "./session-manager.js";
 
 const server = new Server(
@@ -61,6 +63,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break;
       case "fiori_control_press":
         result = await fioriControlPress(args as { selector: Record<string, unknown> });
+        break;
+      case "fiori_wait_for":
+        result = await fioriWaitFor(args as { selector: Record<string, unknown>; timeout?: number });
+        break;
+      case "fiori_table_rows":
+        result = await fioriTableRows(args as { selector: Record<string, unknown>; maxRows?: number });
         break;
       default:
         result = { error: true, message: `Unknown tool: ${name}` };

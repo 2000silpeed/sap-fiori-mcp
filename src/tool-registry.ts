@@ -120,6 +120,46 @@ export const TOOL_DEFINITIONS = [
       required: ["selector"],
     },
   },
+  {
+    name: "fiori_wait_for",
+    description: "UI5 컨트롤이 화면에 나타날 때까지 대기합니다. 페이지 전환 후 다음 액션 전에 사용합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        selector: {
+          type: "object",
+          description: "기다릴 컨트롤의 OPA5 셀렉터",
+          properties: {
+            id: { type: "string" },
+            viewName: { type: "string" },
+            controlType: { type: "string" },
+            properties: { type: "object" },
+          },
+        },
+        timeout: { type: "number", description: "최대 대기 시간(ms). 기본 15000" },
+      },
+      required: ["selector"],
+    },
+  },
+  {
+    name: "fiori_table_rows",
+    description: "sap.m.Table의 행 데이터를 읽습니다. 테이블의 id를 셀렉터에 지정해야 합니다.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        selector: {
+          type: "object",
+          description: "테이블 OPA5 셀렉터. id 필드 필수",
+          properties: {
+            id: { type: "string", description: "테이블 컨트롤 id" },
+          },
+          required: ["id"],
+        },
+        maxRows: { type: "number", description: "최대 행 수. 기본 50" },
+      },
+      required: ["selector"],
+    },
+  },
 ] as const;
 
 export type ToolName = typeof TOOL_DEFINITIONS[number]["name"];
